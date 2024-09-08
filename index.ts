@@ -80,37 +80,70 @@
 
 //! Restful API
 
-import { Database } from "bun:sqlite";
-let db = new Database("mydb.sqlite");
+// import { Database } from "bun:sqlite";
+// let db = new Database("mydb.sqlite");
 
-Bun.serve({
-  port: 4000,
-  async fetch(req) {
-    let url = new URL(req.url);
+// Bun.serve({
+//   port: 4000,
+//   async fetch(req) {
+//     let url = new URL(req.url);
 
-    if (url.pathname === "/") {
-      return new Response("Home Page");
-    }
+//     if (url.pathname === "/") {
+//       return new Response("Home Page");
+//     }
 
-    if (url.pathname === "/users") {
-      let users = db.query("SELECT * FROM users").all();
-      return new Response(JSON.stringify(users), {
-        headers: { "Content-Type": "application/json" },
-      });
-    }
+//     if (url.pathname === "/users") {
+//       let users = db.query("SELECT * FROM users").all();
+//       return new Response(JSON.stringify(users), {
+//         headers: { "Content-Type": "application/json" },
+//       });
+//     }
 
-    if (url.pathname === "/create-user" && req.method === "POST") {
-      let body = await req.json();
-      db.query("INSERT INTO users (name, address) VALUES (?, ?)", [
-        body.name,
-        body.address,
-      ]).run();
-      return new Response("User Created", { status: 201 });
-    }
+//     if (url.pathname === "/create-user" && req.method === "POST") {
+//       let body = await req.json();
+//       db.query("INSERT INTO users (name, address) VALUES (?, ?)", [
+//         body.name,
+//         body.address,
+//       ]).run();
+//       return new Response("User Created", { status: 201 });
+//     }
 
-    return new Response("Not Found", { status: 404 });
-  },
-});
-
+//     return new Response("Not Found", { status: 404 });
+//   },
+// });
 
 // ! learn about .prepare and .run
+
+// Connecting frontend  with backend using fetch simple example
+
+// import { Database } from "bun:sqlite";
+// let db = new Database("mydb.sqlite");
+
+// Bun.serve({
+//   port: 4000,
+
+//   async fetch(req) {
+//     let url = new URL(req.url);
+
+//     const userList = db.query("SELECT * FROM users").all();
+
+//     return Response.json(userList);
+//   },
+// });
+
+// ? to fix the cors error : bun add cors
+
+// SImilar as the express on node js
+// bunjs % bun add elysia
+
+import { Database } from "bun:sqlite";
+import Elysia from "elysia";
+import cors from "cors";
+let db = new Database("mydb.sqlite");
+
+new Elysia()
+  .get("/", () => {
+    const userList = db.query("select * from users").all();
+    return Response.json(userList);
+  })
+  .listen(4000);
