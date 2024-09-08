@@ -8,3 +8,6 @@ Js Core + Zig + Builtins APIs
 
 
 ### Bun: Setup, Exploration and RESTAPI
+
+
+## File Structure
